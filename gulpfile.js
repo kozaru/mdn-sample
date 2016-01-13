@@ -1,10 +1,9 @@
-'use strict';
-
 // gulp・glupのツールを読み込んで変数に代入
 var gulp = require('gulp');
 var sass = require('gulp-sass');
 var imagemin = require('gulp-imagemin');
 var autoprefixer = require('gulp-autoprefixer');
+var sourcemaps = require('gulp-sourcemaps');
 
 // 対象ブラウザ
 var AUTOPREFIXER_BROWSERS = [
@@ -20,10 +19,12 @@ var AUTOPREFIXER_BROWSERS = [
 // gulp.taskにsassのタスクを追加
 gulp.task('sass', function() {
   return gulp.src('./gulp/css/**/*.scss')
-    .pipe(sass().on('error', sass.logError))
+    .pipe(sourcemaps.init())
+      .pipe(sass().on('error', sass.logError))
     .pipe(autoprefixer({
       browsers: AUTOPREFIXER_BROWSERS
     }))
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./dist/css/'));
 });
 
@@ -36,11 +37,18 @@ gulp.task('images', function() {
     .pipe(gulp.dest('dist/images/'));
 });
 
+// gulp.taskにHTML用タスクを追加
+gulp.task('html', function() {
+  return gulp.src('gulp/**/*.html')
+    .pipe(gulp.dest('dist/'));
+});
+
 // sassとimages を watch に追加
 gulp.task('watch', function() {
   gulp.watch(['gulp/images/**/*'], ['images']);
   gulp.watch('./gulp/css/**/*.scss', ['sass']);
+  gulp.watch('./gulp/**/*.html', ['html']);
 });
 
 // gulpのdefaultのタスクに watch images sass を追加
-gulp.task('default', ['watch','images','sass']);
+gulp.task('default', ['watch','images','sass','html']);
