@@ -1,37 +1,46 @@
+'use strict';
+
+// gulp・glupのツールを読み込んで変数に代入
 var gulp = require('gulp');
-var stylus = require('gulp-stylus');
+var sass = require('gulp-sass');
 var imagemin = require('gulp-imagemin');
 var autoprefixer = require('gulp-autoprefixer');
 
+// 対象ブラウザ
 var AUTOPREFIXER_BROWSERS = [
-    'ie >= 9',
-    'ff >= 30',
-    'chrome >= 34',
-    'safari >= 7',
-    'opera >= 23',
-    'ios >= 7',
-    'android >= 4.4'
+  'ie >= 9',
+  'ff >= 30',
+  'chrome >= 34',
+  'safari >= 7',
+  'opera >= 23',
+  'ios >= 7',
+  'android >= 4.4'
 ];
 
-// Copy all static images
+// gulp.taskにsassのタスクを追加
+gulp.task('sass', function() {
+  return gulp.src('./gulp/css/**/*.scss')
+    .pipe(sass().on('error', sass.logError))
+    .pipe(autoprefixer({
+      browsers: AUTOPREFIXER_BROWSERS
+    }))
+    .pipe(gulp.dest('./dist/css/'));
+});
+
+// gulp.taskに画像圧縮のタスクを追加
 gulp.task('images', function() {
-    return gulp.src('gulp/images/**/*')
-        .pipe(imagemin({optimizationLevel: 5}))
-        .pipe(gulp.dest('dist/images/'));
+  return gulp.src('gulp/images/**/*')
+    .pipe(imagemin({
+      optimizationLevel: 5
+    }))
+    .pipe(gulp.dest('dist/images/'));
 });
 
-// Compile and automatically prefix stylesheets
-gulp.task('stylus', function() {
-    return gulp.src('gulp/css/**/*.styl')
-        .pipe(stylus())
-        .pipe(autoprefixer({browsers: AUTOPREFIXER_BROWSERS}))
-        .pipe(gulp.dest('dist/css/'));
-});
-
+// sassとimages を watch に追加
 gulp.task('watch', function() {
-    gulp.watch(['gulp/images/**/*'], ['images']);
-    gulp.watch(['gulp/css/**/*.styl'], ['stylus']);
+  gulp.watch(['gulp/images/**/*'], ['images']);
+  gulp.watch('./gulp/**/*.scss', ['sass']);
 });
 
-gulp.task('default', ['watch', 'images','stylus']);
-
+// gulpのdefaultのタスクに watch images sass を追加
+gulp.task('default', ['watch','images','sass']);
