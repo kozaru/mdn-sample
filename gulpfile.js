@@ -1,5 +1,3 @@
-'use strict';
-
 // gulp・glupのツールを読み込んで変数に代入
 var gulp = require('gulp');
 var sass = require('gulp-sass');
