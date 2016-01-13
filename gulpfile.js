@@ -39,7 +39,7 @@ gulp.task('images', function() {
 // sassとimages を watch に追加
 gulp.task('watch', function() {
   gulp.watch(['gulp/images/**/*'], ['images']);
-  gulp.watch('./gulp/**/*.scss', ['sass']);
+  gulp.watch('./gulp/css/**/*.scss', ['sass']);
 });
 
 // gulpのdefaultのタスクに watch images sass を追加
